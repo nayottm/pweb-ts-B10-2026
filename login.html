@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Masuk</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <h1>Masuk</h1>
+    <p class="muted">
+      Halaman ini untuk mengakses Dashboard Admin dan Panel Operator.
+      Layar Kiosk tidak memerlukan login.
+    </p>
+
+    <form id="loginForm" novalidate>
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="username" required />
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required />
+
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <button id="submitBtn" type="submit" class="btn btn-primary">Masuk</button>
+    </form>
+
+    <p class="muted small">
+      Gunakan akun uji dari
+      <a href="https://dummyjson.com/users" target="_blank" rel="noopener">dummyjson.com/users</a>.
+    </p>
+  </main>
+
+  <script type="module" src="dist/login.js" defer></script>
+</body>
+</html>

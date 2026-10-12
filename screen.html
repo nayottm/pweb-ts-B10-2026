@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Layar Antrian</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="screen-page">
+  <header class="screen-header">
+    <div>
+      <h1>Nomor sedang dipanggil</h1>
+      <p id="updated" class="muted small">Diperbarui -</p>
+    </div>
+    <nav class="screen-nav">
+      <a class="btn btn-dark" href="screen.html">Layar Antrian</a>
+      <a class="btn" href="queue.html">Ambil Nomor</a>
+      <button id="fsBtn" class="btn" type="button">Layar Penuh</button>
+    </nav>
+  </header>
+
+  <main id="cards" class="cards"></main>
+
+  <script type="module" src="dist/screen.js" defer></script>
+</body>
+</html>
