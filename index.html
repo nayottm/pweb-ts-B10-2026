@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - Antrian RS</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="dist/index.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Dashboard Admin</h1>
+    <p id="userInfo"></p>
+
+    <button type="button" id="resetButton">Reset Antrian</button>
+    <button type="button" id="logoutButton">Keluar</button>
+  </header>
+
+  <main>
+    <p id="message" role="status" aria-live="polite" hidden></p>
+
+    <section>
+      <h2>Tambah Jenis Antrian</h2>
+
+      <form id="queueForm">
+        <label for="queueCode">Kode Antrian</label>
+        <input
+          type="text"
+          id="queueCode"
+          name="code"
+          maxlength="1"
+          placeholder="Contoh: R"
+          required
+        >
+
+        <label for="queueName">Nama Layanan</label>
+        <input
+          type="text"
+          id="queueName"
+          name="name"
+          placeholder="Contoh: Radiologi"
+          required
+        >
+
+        <button type="submit">Tambah Layanan</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Daftar Jenis Antrian</h2>
+      <div id="queueList"></div>
+    </section>
+
+    <section>
+      <h2>Terbitkan Tiket Manual</h2>
+
+      <form id="ticketForm">
+        <label for="ticketQueue">Jenis Antrian</label>
+        <select id="ticketQueue" name="code" required></select>
+
+        <label for="ticketPriority">Prioritas</label>
+        <select id="ticketPriority" name="priority" required>
+          <option value="Normal">Normal</option>
+          <option value="Lansia">Lansia</option>
+          <option value="Disabilitas">Disabilitas</option>
+          <option value="VIP">VIP</option>
+        </select>
+
+        <button id="issueButton" type="submit">
+          Terbitkan Tiket
+        </button>
+      </form>
+
+      <div id="ticketResult"></div>
+    </section>
+
+    <section>
+      <h2>Daftar Tiket per Jenis Antrian</h2>
+      <div id="ticketList"></div>
+    </section>
+  </main>
+</body>
+</html>
