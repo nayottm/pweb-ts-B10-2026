@@ -1,56 +1,50 @@
-import { KEYS } from "./types.js";
-
 export type Role = "admin" | "moderator" | "user";
 
 export interface Session {
-  token: string;
-  role: Role;
-  firstName: string;
+    token: string;
+    role: Role;
+    firstName: string;
 }
 
-export function saveSession(s: Session): void {
-  localStorage.setItem(KEYS.SESSION, JSON.stringify(s));
+export function saveSession(session: Session): void {
+    localStorage.setItem("session", JSON.stringify(session));
+    localStorage.setItem("token", session.token);
+    localStorage.setItem("role", session.role);
+    localStorage.setItem("firstName", session.firstName);
 }
 
 export function getSession(): Session | null {
-  try {
-    const raw = localStorage.getItem(KEYS.SESSION);
-    return raw ? (JSON.parse(raw) as Session) : null;
-  } catch {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role") as Role;
+    const firstName = localStorage.getItem("firstName");
+    if (token && role && firstName) return { token, role, firstName };
     return null;
-  }
 }
 
 export function clearSession(): void {
-  localStorage.removeItem(KEYS.SESSION);
+    localStorage.removeItem("session");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("firstName");
 }
 
-// Moderator diperlakukan sama dengan admin
-export function isAdmin(s: Session | null): boolean {
-  return !!s && (s.role === "admin" || s.role === "moderator");
-}
+// Fungsi Pelindung Halaman Berdasarkan Soal
+export function guardPage(allowedRoles: Role[]): void {
+    const session = getSession();
+    
+    // 1. Wajib Login
+    if (!session) {
+        window.location.href = "login.html";
+        return;
+    }
 
-// Auth guard: panggil di awal operator.ts
-export function requireAuth(): Session {
-  const s = getSession();
-  if (!s) {
-    window.location.href = "login.html";
-    throw new Error("Belum login");
-  }
-  return s;
-}
-
-// Role guard: panggil di awal index.ts (dashboard admin)
-export function requireAdmin(): Session {
-  const s = getSession();
-  if (!s || !isAdmin(s)) {
-    window.location.href = "login.html";
-    throw new Error("Akses ditolak");
-  }
-  return s;
-}
-
-export function logout(): void {
-  clearSession();
-  window.location.href = "login.html";
+    // 2. Filter Hak Akses Role
+    if (!allowedRoles.includes(session.role)) {
+        // Jika tidak punya akses, kembalikan ke habitat asalnya
+        if (session.role === "admin" || session.role === "moderator") {
+            window.location.href = "index.html"; // Admin dikembalikan ke Dashboard
+        } else {
+            window.location.href = "queue.html"; // User dikembalikan ke Ambil Antrian
+        }
+    }
 }

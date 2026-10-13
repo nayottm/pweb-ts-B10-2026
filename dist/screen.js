@@ -1,4 +1,13 @@
 import { KEYS } from "./types.js";
+import { getSession } from "./auth.js";
+import { guardPage } from "./auth.js";
+// Admin, moderator, dan user biasa boleh melihat layar
+guardPage(["admin", "moderator", "user"]);
+// Proteksi Halaman: Tendang ke login jika belum ada sesi
+const session = getSession();
+if (!session) {
+    window.location.href = "login.html";
+}
 const POLL_MS = 2500; // soal minta polling 2-3 detik
 const cardsEl = document.getElementById("cards");
 const updatedEl = document.getElementById("updated");

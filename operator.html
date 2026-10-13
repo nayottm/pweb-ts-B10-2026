@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Panel Operator</title>
-    <script src="dist/operator.js" defer></script>
+    <script type="module" src="dist/operator.js" defer></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <header class="operator-header">
         <h2>Panel Operator</h2>
-        <button class="btn-outline" onclick="logout()">Keluar</button>
-    </div>
+        <nav class="admin-tabs" aria-label="Navigasi panel admin">
+            <a href="index.html">Dashboard</a>
+            <a href="operator.html" aria-current="page">Panel Operator</a>
+        </nav>
+        <button id="logoutBtn" class="btn-outline">Keluar</button>
+    </header>
     <div id="operator-container" class="grid"></div>
 </body>
 </html>

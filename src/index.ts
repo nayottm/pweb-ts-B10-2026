@@ -15,6 +15,12 @@ import {
 
 import type { Priority, Ticket } from "./types.js";
 
+import { clearSession, guardPage } from "./auth.js";
+
+// Hanya admin dan moderator yang boleh masuk
+guardPage(["admin", "moderator"]);
+
+
 const queueForm = document.querySelector<HTMLFormElement>("#queueForm")!;
 const ticketForm = document.querySelector<HTMLFormElement>("#ticketForm")!;
 const queueList = document.querySelector<HTMLElement>("#queueList")!;

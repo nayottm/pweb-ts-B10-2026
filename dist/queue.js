@@ -1,5 +1,14 @@
 import { generateTicket } from './tickets.js';
 import { getActiveQueueTypes } from './queryTypes.js';
+import { getSession } from "./auth.js";
+import { guardPage } from "./auth.js";
+// Admin, moderator, dan user biasa boleh ambil tiket
+guardPage(["admin", "moderator", "user"]);
+// Proteksi Halaman: Tendang ke login jika belum ada sesi
+const session = getSession();
+if (!session) {
+    window.location.href = "login.html";
+}
 function renderQueueCards() {
     const container = document.getElementById('queue-container');
     if (!container)

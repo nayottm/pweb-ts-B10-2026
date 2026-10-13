@@ -1,34 +1,44 @@
 /* =========================================
-   1. VARIABEL TEMA & UTILITAS GLOBAL
+   1. VARIABEL TEMA (MODERN MEDICAL / SAAS)
    ========================================= */
 :root {
-  --bg: #f4f8f8;
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #64748b;
-  --border: #d9e2ea;
-  --accent: #fb9300;
-  --accent-dark: #d97c00;
-  --danger: #dc2626;
+  --bg-body: #f1f5f9;       /* Abu-abu kebiruan super terang */
+  --card-bg: #ffffff;
+  --text-main: #1e293b;     /* Slate gelap untuk teks utama */
+  --text-muted: #64748b;    /* Slate medium untuk teks pendukung */
+  --border-light: #e2e8f0;
+  
+  /* Palet Warna Utama (Royal Blue & Teal) */
+  --primary: #2563eb;       
+  --primary-hover: #1d4ed8;
+  --secondary: #0ea5e9;     /* Cyan/Teal untuk highlight */
+  --danger: #ef4444;
+  --danger-hover: #b91c1c;
   --success: #10b981;
+
+  /* Utilitas Bentuk & Bayangan */
+  --radius-card: 16px;
+  --radius-btn: 50px;       /* Tombol gaya Pill */
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 25px -5px rgba(37, 99, 235, 0.1);
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
 }
 
-.muted { color: var(--muted); }
-.small { font-size: 0.8rem; }
-.error { color: var(--danger); font-size: 0.9rem; margin: 0.5rem 0; font-weight: 500;}
-.text-orange { color: var(--accent); }
+/* Utilitas Teks */
+.muted { color: var(--text-muted); }
+.small { font-size: 0.85rem; }
+.error { color: var(--danger); font-size: 0.9rem; margin: 0.5rem 0; font-weight: 600; padding: 0.5rem; background: #fef2f2; border-radius: 8px;}
+.text-orange { color: var(--secondary); } /* Kelas tetap, tapi warna menyesuaikan tema baru */
 
-/* Layout Grid Universal (Digunakan Operator & Kiosk) */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -39,188 +49,221 @@ body {
 }
 
 /* =========================================
-   2. KOMPONEN TOMBOL (BUTTONS)
+   2. KOMPONEN TOMBOL (GAYA PILL & LIFT)
    ========================================= */
 .btn, button {
-  padding: 0.7rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-btn);
   background: #fff;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-family: inherit;
-  color: var(--text);
-  transition: all 0.2s ease;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: all 0.3s ease;
 }
 
 .btn:hover:not(:disabled), button:hover:not(:disabled) {
   background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
-.btn:disabled, button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.btn:disabled, button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none;}
+
+/* Varian Tombol */
+.btn-primary, #queueForm button, #ticketForm button { 
+  background: var(--primary); border-color: var(--primary); color: #fff; width: 100%; 
+}
+.btn-primary:hover:not(:disabled), #queueForm button:hover, #ticketForm button:hover { 
+  background: var(--primary-hover); color: #fff; 
 }
 
-.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; width: 100%; }
-.btn-primary:hover:not(:disabled) { background: var(--accent-dark); color: #fff;}
+.btn-dark { background: var(--text-main); color: #fff !important; border-color: var(--text-main); }
+.btn-dark:hover { background: #0f172a; }
 
-.btn-dark { background: var(--text); color: #fff !important; border-color: var(--text); }
-.btn-dark:hover { background: #334155; }
+.btn-outline { border: 2px solid var(--border-light); color: var(--text-muted); background: transparent; }
+.btn-outline:hover { border-color: var(--text-muted); color: var(--text-main); }
 
-.btn-outline { border: 1px solid var(--border); color: var(--text); background: transparent; font-weight: 500;}
-.btn-outline:hover { background: var(--border); }
-
-/* Tombol Khusus Operator & Queue */
-.btn-main { background: var(--text); color: #fff; font-weight: 700; width: 100%; margin: 1rem 0; padding: 0.8rem; border: none; }
-.btn-main:hover { background: #334155; }
-.btn-sub { background: #e2e8f0; border: none; padding: 0.5rem; font-size: 0.85rem; border-radius: 6px; flex: 1; font-weight: 600; color: var(--text);}
-.btn-sub:hover { background: #cbd5e1; }
-.btn-call { background: var(--accent); color: #fff; border: none; font-weight: bold; }
-.btn-call:hover { background: var(--accent-dark); }
+/* Tombol Aksi Kiosk & Operator */
+.btn-call { background: var(--primary); color: #fff; border: none; }
+.btn-call:hover { background: var(--primary-hover); }
 
 /* =========================================
-   3. HALAMAN LOGIN (login.html)
+   3. HALAMAN LOGIN (GRADIENT BACKGROUND)
    ========================================= */
-.login-page { display: grid; place-items: center; min-height: 100vh; padding: 1rem; }
+.login-page { 
+  display: grid; 
+  place-items: center; 
+  min-height: 100vh; 
+  padding: 1rem; 
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
 .login-card {
   width: 100%;
-  max-width: 400px;
-  background: var(--card);
-  padding: 2.5rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+  max-width: 420px;
+  background: var(--card-bg);
+  padding: 2.5rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
 }
-.login-card h1 { margin-top: 0; margin-bottom: 0.5rem; font-size: 1.8rem;}
-.login-card form { display: flex; flex-direction: column; margin-top: 1.5rem; }
-.login-card label { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem; margin-top: 1rem; }
+.login-card h1 { margin-top: 0; margin-bottom: 0.5rem; font-size: 2rem; color: var(--primary); }
+.login-card form { display: flex; flex-direction: column; margin-top: 2rem; text-align: left; }
+.login-card label { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main); }
 .login-card input {
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
   font-size: 1rem;
   background: #f8fafc;
+  transition: border-color 0.3s;
+  margin-bottom: 1.2rem;
 }
-.login-card input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(251, 147, 0, 0.15); }
-.login-card .btn { margin-top: 1.8rem; }
+.login-card input:focus { outline: none; border-color: var(--secondary); background: #fff; }
+.login-card .btn { margin-top: 1rem; padding: 0.9rem; font-size: 1rem; }
 
 /* =========================================
-   4. DASHBOARD ADMIN (index.html)
+   4. DASHBOARD ADMIN (DARK HEADER)
    ========================================= */
-header:not(.screen-header) {
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
-  padding: 1rem 1.5rem;
+header:not(.screen-header):not(.operator-header) {
+  background: var(--text-main);
+  padding: 1.2rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
 }
-header h1, header h2 { margin: 0; font-size: 1.4rem; color: var(--text); }
-header p:not(.muted) { margin: 0; }
-#userInfo { margin: 0 auto 0 1.5rem; color: var(--muted); font-size: 0.95rem; font-weight: 500; }
+header:not(.screen-header):not(.operator-header) h1 { 
+  margin: 0; font-size: 1.5rem; color: #fff; letter-spacing: -0.5px;
+}
+#userInfo { margin: 0 auto 0 2rem; color: #94a3b8; font-size: 0.95rem; }
 
-#resetButton { border-color: var(--danger); color: var(--danger); font-weight: 600;}
-#resetButton:hover { background: var(--danger); color: #fff; }
-#logoutButton { background: var(--text); color: #fff; border-color: var(--text); font-weight: 600;}
-#logoutButton:hover { background: #334155; }
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.admin-tabs a {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-btn);
+  color: var(--text-muted);
+  background: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+.admin-tabs a[aria-current="page"] {
+  border-color: var(--primary);
+  color: #fff;
+  background: var(--primary);
+}
+header:not(.screen-header):not(.operator-header) .admin-tabs a:not([aria-current="page"]) {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  background: transparent;
+}
+
+#resetButton { background: transparent; border: 2px solid var(--danger); color: var(--danger); }
+#resetButton:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+#logoutButton { background: rgba(255,255,255,0.1); color: #fff; border: none; }
+#logoutButton:hover { background: rgba(255,255,255,0.2); }
 
 main:not(.login-card):not(.cards) {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 2.5rem 1.5rem;
   display: grid;
-  gap: 1.5rem;
+  gap: 2rem;
   grid-template-columns: 1fr;
 }
 @media (min-width: 850px) {
   main:not(.login-card):not(.cards) { grid-template-columns: 1fr 1fr; align-items: start; }
 }
 
-#message { grid-column: 1 / -1; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 1rem; border-radius: 8px; text-align: center; font-weight: 500;}
+#message { grid-column: 1 / -1; background: #d1fae5; color: #065f46; border: none; padding: 1rem; border-radius: 12px; text-align: center; font-weight: 600;}
 
 main section {
-  background: var(--card);
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.02);
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.02);
 }
-main section h2 { margin-top: 0; font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; margin-bottom: 1.2rem; }
+main section h2 { margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid var(--bg-body); padding-bottom: 1rem; margin-bottom: 1.5rem; color: var(--primary); }
 
-#queueForm, #ticketForm { display: flex; flex-direction: column; gap: 1rem; }
-#queueForm label, #ticketForm label { font-weight: 600; font-size: 0.9rem; margin-bottom: -0.5rem; }
-#queueForm input, #ticketForm select { padding: 0.7rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: #fff;}
-#queueForm input:focus, #ticketForm select:focus { outline: none; border-color: var(--accent); }
-#queueForm button, #ticketForm button { background: var(--accent); color: white; padding: 0.8rem; font-weight: 600; border: none; margin-top: 0.5rem;}
-#queueForm button:hover, #ticketForm button:hover { background: var(--accent-dark); }
+#queueForm, #ticketForm { display: flex; flex-direction: column; gap: 0.8rem; }
+#queueForm label, #ticketForm label { font-weight: 600; font-size: 0.9rem; }
+#queueForm input, #ticketForm select { padding: 0.75rem 1rem; border: 2px solid var(--border-light); border-radius: 12px; font-size: 1rem; background: var(--bg-body);}
+#queueForm input:focus, #ticketForm select:focus { outline: none; border-color: var(--primary); background: #fff;}
 
 #queueList, #ticketList { display: flex; flex-direction: column; gap: 1rem; }
-#queueList article, #ticketList article { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; }
-#queueList article h3, #ticketList article h3 { margin: 0 0 0.5rem; font-size: 1.1rem; }
-#queueList article p, #ticketList article p { margin: 0.3rem 0; font-size: 0.9rem; color: var(--muted); }
-#ticketList article p strong { color: var(--text); font-size: 1.1rem; }
+#queueList article, #ticketList article { background: var(--bg-body); padding: 1.2rem; border-radius: 12px; border: none; transition: transform 0.2s;}
+#queueList article:hover, #ticketList article:hover { transform: scale(1.01); }
+#queueList article h3, #ticketList article h3 { margin: 0 0 0.2rem; font-size: 1.15rem; color: var(--text-main); }
+#queueList article p, #ticketList article p { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
+#ticketList article p strong { color: var(--primary); font-size: 1.1rem; }
 
-#queueList article button { padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-right: 0.5rem; margin-top: 0.5rem; font-weight: 600; }
-#queueList article button[data-action="delete"] { color: var(--danger); border-color: var(--danger); }
+#queueList article button[data-action="delete"] { background: #fee2e2; color: var(--danger-hover); border: none; margin-top: 1rem; }
 #queueList article button[data-action="delete"]:hover { background: var(--danger); color: #fff; }
 
-#ticketResult { margin-top: 2rem; text-align: center; }
-#ticketResult h3 { color: var(--accent); margin-bottom: 0.2rem; }
-#ticketResult p:nth-of-type(1) { font-size: 2.5rem; font-weight: 800; margin: 0.5rem 0; }
+#ticketResult { margin-top: 2rem; text-align: center; padding: 2rem; background: var(--bg-body); border-radius: 16px; border: 2px dashed var(--border-light);}
+#ticketResult h3 { color: var(--text-muted); margin-bottom: 0.5rem; font-size: 1rem;}
+#ticketResult p:nth-of-type(1) { font-size: 3rem; font-weight: 900; margin: 0; color: var(--primary); line-height: 1;}
 
 /* =========================================
-   5. PANEL OPERATOR & KIOSK (operator.html & queue.html)
+   5. PANEL OPERATOR & KIOSK
    ========================================= */
-.operator-header { padding: 1.5rem; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.operator-header { padding: 1.5rem 2rem; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light);}
+.operator-header h2 { margin: 0; color: var(--primary); font-size: 1.6rem;}
 .card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  background: var(--card-bg);
+  border-radius: var(--radius-card);
+  padding: 1.8rem;
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  border: 1px solid rgba(0,0,0,0.03);
+  transition: box-shadow 0.3s ease;
 }
-.card h3 { margin: 0; font-size: 1.2rem; color: var(--text);}
+.card:hover { box-shadow: var(--shadow-md); }
+.card h3 { margin: 0; font-size: 1.3rem; color: var(--text-main);}
 
-/* Panel Operator */
 .status-row {
   display: flex;
   justify-content: space-between;
   margin: 1.5rem 0;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 8px;
+  padding: 1.2rem;
+  background: var(--bg-body);
+  border-radius: 12px;
   text-align: center;
-  border: 1px solid var(--border);
 }
-.ticket-number { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: 1px; color: var(--text);}
-.btn-group { display: flex; gap: 0.5rem; }
-
-/* Kiosk Antrian */
-.priority-btns { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+.ticket-number { font-size: 2rem; font-weight: 900; margin: 0; color: var(--text-main);}
+.btn-group { display: flex; gap: 0.8rem; }
 
 /* =========================================
    6. LAYAR MONITOR ANTRIAN (screen.html)
    ========================================= */
-.screen-page { padding: 1.5rem; }
-.screen-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.screen-header h1 { margin: 0; font-size: 1.8rem; }
-.screen-nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.screen-nav .btn { padding: 0.6rem 1rem; font-size: 0.9rem; text-decoration: none; color: var(--text); font-weight: 600;}
+.screen-page { padding: 2rem; }
+.screen-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; background: var(--card-bg); padding: 1.5rem 2rem; border-radius: 20px; box-shadow: var(--shadow-sm);}
+.screen-header h1 { margin: 0; font-size: 1.8rem; color: var(--primary); }
+.screen-nav { display: flex; gap: 0.8rem; flex-wrap: wrap; }
 
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-.screen-card { display: flex; flex-direction: column; min-height: 280px; }
-.card-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem;}
-.card-head h2 { margin: 0; font-size: 1.2rem; }
-.badge { background: #eef2f6; color: var(--muted); font-size: 0.8rem; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: 600;}
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.8rem; }
+.screen-card { 
+  display: flex; flex-direction: column; min-height: 320px; border-radius: 24px;
+  border-top: 6px solid var(--primary);
+}
+.card-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 1.2rem; margin-bottom: 1.5rem;}
+.card-head h2 { margin: 0; font-size: 1.3rem; }
+.badge { background: #e0f2fe; color: var(--primary); font-size: 0.85rem; padding: 0.4rem 0.8rem; border-radius: 50px; font-weight: 700;}
 
 .card-body { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-.status-called { color: var(--accent); font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.5rem; align-self: center;}
-.number { font-size: 3.5rem; font-weight: 800; letter-spacing: 2px; color: var(--text); line-height: 1;}
-.empty-title { font-weight: 600; margin: 0 0 0.25rem; color: var(--muted);}
+.status-called { color: var(--text-muted); font-size: 1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 1rem; text-transform: uppercase;}
+.number { font-size: 4.5rem; font-weight: 900; color: var(--primary); line-height: 1; text-shadow: 2px 2px 0px rgba(37,99,235,0.1);}
+.empty-title { font-weight: 600; margin: 0; color: var(--text-muted); font-size: 1.2rem;}
 
-.card-foot { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; text-align: center; font-size: 0.85rem; color: var(--muted); }
+.card-foot { border-top: 1px solid var(--border-light); padding-top: 1.2rem; margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted); font-weight: 500;}

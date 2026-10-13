@@ -6,8 +6,8 @@ const usernameEl = document.getElementById("username");
 const passwordEl = document.getElementById("password");
 const API = "https://dummyjson.com";
 function redirectByRole(role) {
-    // Admin/moderator ke dashboard, user biasa ke operator
-    window.location.href = role === "admin" || role === "moderator" ? "index.html" : "operator.html";
+    // Sesuai soal: Admin ke Dashboard, User ke Ambil Antrian
+    window.location.href = (role === "admin" || role === "moderator") ? "index.html" : "queue.html";
 }
 function showError(msg) {
     errorEl.textContent = msg;
@@ -17,16 +17,12 @@ function setLoading(loading) {
     btn.disabled = loading;
     btn.textContent = loading ? "Memproses..." : "Masuk";
 }
-// Kalau sudah login, langsung arahkan
-// Kalau sudah login, cek apakah datanya sinkron atau korup
 const existing = getSession();
 const syncToken = localStorage.getItem("token");
 if (existing && syncToken) {
-    // Jika data utuh, langsung arahkan
     redirectByRole(existing.role);
 }
 else {
-    // Jika data korup/tidak lengkap akibat error sebelumnya, hapus paksa agar tidak looping!
     localStorage.removeItem("session");
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -52,7 +48,6 @@ form.addEventListener("submit", async (e) => {
         if (!res.ok)
             throw new Error(data.message ?? "Username atau password salah.");
         const token = data.accessToken;
-        // Ambil role dari server. Kalau response login tidak memuatnya, tanya /auth/me
         let role = data.role;
         if (!role) {
             const meRes = await fetch(`${API}/auth/me`, {
@@ -62,16 +57,8 @@ form.addEventListener("submit", async (e) => {
                 throw new Error("Gagal mengambil data pengguna.");
             role = (await meRes.json()).role;
         }
-        // Jika login pakai akun bernama "operator", paksa role menjadi "user"
-        const finalRole = (username.toLowerCase() === "operator" || username.toLowerCase() === "emilys")
-            ? "user"
-            : (role ?? "user");
-        // --- TAMBAHAN SINKRONISASI TUGAS KELOMPOK ---
-        // Menyimpan token, role, dan firstName secara terpisah agar index.ts dan operator.ts bisa membacanya
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", finalRole);
-        localStorage.setItem("firstName", data.firstName);
-        // -------------------------------------------
+        // Murni membaca dari API DummyJSON sesuai soal
+        const finalRole = role ?? "user";
         saveSession({ token, role: finalRole, firstName: data.firstName });
         redirectByRole(finalRole);
     }

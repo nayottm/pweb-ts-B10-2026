@@ -1,5 +1,8 @@
 import { getQueueTypes, addQueueType, toggleQueueType, deleteQueueType } from "./queryTypes.js";
 import { createTicket, getTickets, resetTickets } from "./tickets.js";
+import { guardPage } from "./auth.js";
+// Hanya admin dan moderator yang boleh masuk
+guardPage(["admin", "moderator"]);
 const queueForm = document.querySelector("#queueForm");
 const ticketForm = document.querySelector("#ticketForm");
 const queueList = document.querySelector("#queueList");

@@ -1,42 +1,39 @@
-import { KEYS } from "./types.js";
-export function saveSession(s) {
-    localStorage.setItem(KEYS.SESSION, JSON.stringify(s));
+export function saveSession(session) {
+    localStorage.setItem("session", JSON.stringify(session));
+    localStorage.setItem("token", session.token);
+    localStorage.setItem("role", session.role);
+    localStorage.setItem("firstName", session.firstName);
 }
 export function getSession() {
-    try {
-        const raw = localStorage.getItem(KEYS.SESSION);
-        return raw ? JSON.parse(raw) : null;
-    }
-    catch {
-        return null;
-    }
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    const firstName = localStorage.getItem("firstName");
+    if (token && role && firstName)
+        return { token, role, firstName };
+    return null;
 }
 export function clearSession() {
-    localStorage.removeItem(KEYS.SESSION);
+    localStorage.removeItem("session");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("firstName");
 }
-// Moderator diperlakukan sama dengan admin
-export function isAdmin(s) {
-    return !!s && (s.role === "admin" || s.role === "moderator");
-}
-// Auth guard: panggil di awal operator.ts
-export function requireAuth() {
-    const s = getSession();
-    if (!s) {
+// Fungsi Pelindung Halaman Berdasarkan Soal
+export function guardPage(allowedRoles) {
+    const session = getSession();
+    // 1. Wajib Login
+    if (!session) {
         window.location.href = "login.html";
-        throw new Error("Belum login");
+        return;
     }
-    return s;
-}
-// Role guard: panggil di awal index.ts (dashboard admin)
-export function requireAdmin() {
-    const s = getSession();
-    if (!s || !isAdmin(s)) {
-        window.location.href = "login.html";
-        throw new Error("Akses ditolak");
+    // 2. Filter Hak Akses Role
+    if (!allowedRoles.includes(session.role)) {
+        // Jika tidak punya akses, kembalikan ke habitat asalnya
+        if (session.role === "admin" || session.role === "moderator") {
+            window.location.href = "index.html"; // Admin dikembalikan ke Dashboard
+        }
+        else {
+            window.location.href = "queue.html"; // User dikembalikan ke Ambil Antrian
+        }
     }
-    return s;
-}
-export function logout() {
-    clearSession();
-    window.location.href = "login.html";
 }
