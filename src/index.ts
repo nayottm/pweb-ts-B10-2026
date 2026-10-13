@@ -3,19 +3,18 @@ import {
   addQueueType,
   toggleQueueType,
   deleteQueueType
-} from "./queryTypes.js"; // ⬅️ Hapus type QueueType dari sini
+} from "./queryTypes.js";
 
-import type { QueueType } from "./types.js"; // ⬅️ Tambahkan baris ini
+import type { QueueType } from "./types.js";
 
 import {
-  generateTicket,
+  createTicket,
   getTickets,
-  resetTickets,
-  type Priority,
-  type Ticket
+  resetTickets
 } from "./tickets.js";
 
-// Mengambil elemen HTML
+import type { Priority, Ticket } from "./types.js";
+
 const queueForm = document.querySelector<HTMLFormElement>("#queueForm")!;
 const ticketForm = document.querySelector<HTMLFormElement>("#ticketForm")!;
 const queueList = document.querySelector<HTMLElement>("#queueList")!;
@@ -26,60 +25,42 @@ const message = document.querySelector<HTMLElement>("#message")!;
 const issueButton = document.querySelector<HTMLButtonElement>("#issueButton")!;
 const userInfo = document.querySelector<HTMLElement>("#userInfo")!;
 
-// Mengamankan teks sebelum dimasukkan ke HTML
 function escapeHTML(value: string): string {
   return value.replace(/[&<>"']/g, (char: string) => {
     const entities: Record<string, string> = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     };
-
     return entities[char];
   });
 }
 
-// Menampilkan pesan
 function showMessage(text: string): void {
   message.hidden = false;
   message.textContent = text;
 }
 
-// Menampilkan jenis antrian
 function renderQueues(): void {
-  // Ditambahkan tipe QueueType[] agar tidak implicit any
   const queues: QueueType[] = getQueueTypes(); 
 
   queueList.innerHTML = queues.map((queue: QueueType) => {
-    const status = queue.isActive ? "Aktif" : "Nonaktif";
-    const toggleText = queue.isActive ? "Nonaktifkan" : "Aktifkan";
+    const status = queue.active ? "Aktif" : "Nonaktif";
+    const toggleText = queue.active ? "Nonaktifkan" : "Aktifkan";
 
     return `
       <article>
         <h3>${escapeHTML(queue.name)} (${escapeHTML(queue.code)})</h3>
         <p>Status: ${status}</p>
-
-        <button
-          type="button"
-          data-action="toggle"
-          data-code="${escapeHTML(queue.code)}">
+        <button type="button" data-action="toggle" data-code="${escapeHTML(queue.code)}">
           ${toggleText}
         </button>
-
-        <button
-          type="button"
-          data-action="delete"
-          data-code="${escapeHTML(queue.code)}">
+        <button type="button" data-action="delete" data-code="${escapeHTML(queue.code)}">
           Hapus
         </button>
       </article>
     `;
   }).join("") || "<p>Belum ada jenis antrian.</p>";
 
-  // Hanya jenis antrian aktif yang dapat dipilih
-  const activeQueues = queues.filter((queue: QueueType) => queue.isActive);
+  const activeQueues = queues.filter((queue: QueueType) => queue.active);
 
   ticketQueue.innerHTML = activeQueues.map((queue: QueueType) => {
     return `
@@ -95,9 +76,7 @@ function renderQueues(): void {
   renderTickets();
 }
 
-// Menampilkan tiket berdasarkan jenis antrian
 function renderTickets(): void {
-  // Ditambahkan tipe eksplisit QueueType[] dan Ticket[]
   const queues: QueueType[] = getQueueTypes();
   const tickets: Ticket[] = getTickets();
 
@@ -125,7 +104,6 @@ function renderTickets(): void {
   }).join("") || "<p>Belum ada jenis antrian.</p>";
 }
 
-// Proteksi halaman Dashboard Admin
 const token = localStorage.getItem("token");
 const role = localStorage.getItem("role")?.toLowerCase();
 
@@ -137,33 +115,24 @@ if (!token || (role !== "admin" && role !== "moderator")) {
   renderQueues();
 }
 
-// Menambah jenis antrian
 queueForm.addEventListener("submit", (event: SubmitEvent) => {
   event.preventDefault();
-
   const formData = new FormData(queueForm);
   const code = String(formData.get("code") || "");
   const name = String(formData.get("name") || "");
 
   try {
     addQueueType(code, name);
-
     queueForm.reset();
     showMessage("Jenis antrian berhasil ditambahkan.");
     renderQueues();
   } catch (error) {
-    showMessage(
-      error instanceof Error
-        ? error.message
-        : "Gagal menambahkan jenis antrian."
-    );
+    showMessage(error instanceof Error ? error.message : "Gagal menambahkan jenis antrian.");
   }
 });
 
-// Mengaktifkan, menonaktifkan, dan menghapus jenis antrian
 queueList.addEventListener("click", (event: MouseEvent) => {
   const target = event.target;
-
   if (!(target instanceof Element)) return;
 
   const button = target.closest<HTMLButtonElement>("button[data-action]");
@@ -171,7 +140,6 @@ queueList.addEventListener("click", (event: MouseEvent) => {
 
   const code = button.dataset.code;
   const action = button.dataset.action;
-
   if (!code) return;
 
   try {
@@ -181,32 +149,23 @@ queueList.addEventListener("click", (event: MouseEvent) => {
     } else if (action === "delete") {
       const confirmed = window.confirm("Yakin ingin menghapus jenis antrian ini?");
       if (!confirmed) return;
-
       deleteQueueType(code);
       showMessage("Jenis antrian berhasil dihapus.");
     }
-
     renderQueues();
   } catch (error) {
-    showMessage(
-      error instanceof Error
-        ? error.message
-        : "Operasi gagal."
-    );
+    showMessage(error instanceof Error ? error.message : "Operasi gagal.");
   }
 });
 
-// Menerbitkan tiket manual
 ticketForm.addEventListener("submit", (event: SubmitEvent) => {
   event.preventDefault();
-
   const formData = new FormData(ticketForm);
   const code = String(formData.get("code") || "");
   const priority = String(formData.get("priority") || "Normal") as Priority;
 
   try {
-    const ticket = generateTicket(code, priority);
-
+    const ticket = createTicket(code, priority);
     ticketResult.replaceChildren();
 
     const heading = document.createElement("h3");
@@ -215,7 +174,6 @@ ticketForm.addEventListener("submit", (event: SubmitEvent) => {
     const number = document.createElement("p");
     number.textContent = ticket.ticketNumber;
 
-    // Ditambahkan tipe eksplisit pada find
     const queue = getQueueTypes().find((q: QueueType) => q.code === ticket.typeCode);
     const queueName = queue ? queue.name : ticket.typeCode;
 
@@ -228,15 +186,10 @@ ticketForm.addEventListener("submit", (event: SubmitEvent) => {
     renderQueues();
     window.dispatchEvent(new Event("storage"));
   } catch (error) {
-    showMessage(
-      error instanceof Error
-        ? error.message
-        : "Gagal menerbitkan tiket."
-    );
+    showMessage(error instanceof Error ? error.message : "Gagal menerbitkan tiket.");
   }
 });
 
-// Reset seluruh tiket
 document.querySelector("#resetButton")?.addEventListener("click", () => {
   const confirmed = window.confirm("Reset seluruh tiket antrian? Data tiket akan dihapus.");
   if (!confirmed) return;
@@ -244,7 +197,6 @@ document.querySelector("#resetButton")?.addEventListener("click", () => {
   try {
     resetTickets();
     ticketResult.replaceChildren();
-
     showMessage("Seluruh tiket berhasil direset.");
     renderQueues();
     window.dispatchEvent(new Event("storage"));
@@ -253,21 +205,17 @@ document.querySelector("#resetButton")?.addEventListener("click", () => {
   }
 });
 
-// Logout
 document.querySelector("#logoutButton")?.addEventListener("click", () => {
   localStorage.removeItem("token");
   localStorage.removeItem("role");
   localStorage.removeItem("firstName");
-
   window.location.href = "login.html";
 });
 
-// Memperbarui tampilan saat Local Storage berubah di tab lain
 window.addEventListener("storage", () => {
   renderQueues();
 });
 
-// Memperbarui daftar tiket secara berkala
 window.setInterval(() => {
   renderQueues();
 }, 2000);

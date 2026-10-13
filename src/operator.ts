@@ -1,26 +1,29 @@
-import { getTickets, callNext, skipCurrent, finishCurrent, getWaitingTickets, QueueType } from './tickets.js';
+import { getTickets, callNext, skipCurrent, finishCurrent, getWaitingTickets } from './tickets.js';
+import { getQueueTypes } from './queryTypes.js';
+import type { QueueType, Ticket } from './types.js';
 
-if (!localStorage.getItem('session_token')) {
+// Pastikan key auth sama dengan login.ts (Orang 1)
+if (!localStorage.getItem('token')) {
     window.location.href = 'login.html'; 
 }
 
 (window as any).logout = () => {
-    localStorage.removeItem('session_token');
-    localStorage.removeItem('session_role');
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('firstName');
     window.location.href = 'login.html';
 };
 
-function renderOperatorPanel() {
+function renderOperatorPanel(): void {
     const container = document.getElementById('operator-container');
     if (!container) return;
     
     container.innerHTML = '';
-    const queueData = localStorage.getItem('rs_queue_types');
-    const queueTypes: QueueType[] = queueData ? JSON.parse(queueData) : [];
-    const allTickets = getTickets();
+    const queueTypes: QueueType[] = getQueueTypes();
+    const allTickets: Ticket[] = getTickets();
 
-    queueTypes.forEach(qt => {
-        const calledTicket = allTickets.find(t => t.typeCode === qt.code && t.status === 'called');
+    queueTypes.forEach((qt: QueueType) => {
+        const calledTicket = allTickets.find((t: Ticket) => t.typeCode === qt.code && t.status === 'called');
         const waitingTickets = getWaitingTickets(qt.code);
         const nextTicket = waitingTickets.length > 0 ? waitingTickets[0] : null;
 

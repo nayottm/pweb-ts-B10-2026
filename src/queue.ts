@@ -1,19 +1,15 @@
-import { generateTicket, QueueType, Priority } from './tickets.js';
+import { generateTicket } from './tickets.js';
+import { getActiveQueueTypes } from './queryTypes.js';
+import type { QueueType, Priority } from './types.js';
 
-function getActiveQueueTypes(): QueueType[] {
-    const data = localStorage.getItem('rs_queue_types');
-    const allTypes: QueueType[] = data ? JSON.parse(data) : [];
-    return allTypes.filter(qt => qt.isActive);
-}
-
-function renderQueueCards() {
+function renderQueueCards(): void {
     const container = document.getElementById('queue-container');
     if (!container) return;
     
     container.innerHTML = '';
-    const queueTypes = getActiveQueueTypes();
+    const queueTypes: QueueType[] = getActiveQueueTypes();
 
-    queueTypes.forEach(qt => {
+    queueTypes.forEach((qt: QueueType) => {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
