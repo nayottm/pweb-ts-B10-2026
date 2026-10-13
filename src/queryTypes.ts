@@ -2,6 +2,8 @@ import type { QueueType } from "./types.js";
 
 const STORAGE_KEY = "queueTypes";
 
+
+
 export function getQueueTypes(): QueueType[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY);

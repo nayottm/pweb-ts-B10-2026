@@ -1,18 +1,19 @@
-
 import {
   getQueueTypes,
   addQueueType,
   toggleQueueType,
   deleteQueueType
-} from "./queueTypeService.js";
+} from "./queryTypes.js"; // ⬅️ Hapus type QueueType dari sini
+
+import type { QueueType } from "./types.js"; // ⬅️ Tambahkan baris ini
 
 import {
-  createTicket,
+  generateTicket,
   getTickets,
-  resetTickets
-} from "./ticketService.js";
-
-import type { Priority } from "./ticketService.js";
+  resetTickets,
+  type Priority,
+  type Ticket
+} from "./tickets.js";
 
 // Mengambil elemen HTML
 const queueForm = document.querySelector<HTMLFormElement>("#queueForm")!;
@@ -48,11 +49,12 @@ function showMessage(text: string): void {
 
 // Menampilkan jenis antrian
 function renderQueues(): void {
-  const queues = getQueueTypes();
+  // Ditambahkan tipe QueueType[] agar tidak implicit any
+  const queues: QueueType[] = getQueueTypes(); 
 
-  queueList.innerHTML = queues.map((queue) => {
-    const status = queue.active ? "Aktif" : "Nonaktif";
-    const toggleText = queue.active ? "Nonaktifkan" : "Aktifkan";
+  queueList.innerHTML = queues.map((queue: QueueType) => {
+    const status = queue.isActive ? "Aktif" : "Nonaktif";
+    const toggleText = queue.isActive ? "Nonaktifkan" : "Aktifkan";
 
     return `
       <article>
@@ -77,9 +79,9 @@ function renderQueues(): void {
   }).join("") || "<p>Belum ada jenis antrian.</p>";
 
   // Hanya jenis antrian aktif yang dapat dipilih
-  const activeQueues = queues.filter((queue) => queue.active);
+  const activeQueues = queues.filter((queue: QueueType) => queue.isActive);
 
-  ticketQueue.innerHTML = activeQueues.map((queue) => {
+  ticketQueue.innerHTML = activeQueues.map((queue: QueueType) => {
     return `
       <option value="${escapeHTML(queue.code)}">
         ${escapeHTML(queue.name)} (${escapeHTML(queue.code)})
@@ -95,18 +97,19 @@ function renderQueues(): void {
 
 // Menampilkan tiket berdasarkan jenis antrian
 function renderTickets(): void {
-  const queues = getQueueTypes();
-  const tickets = getTickets();
+  // Ditambahkan tipe eksplisit QueueType[] dan Ticket[]
+  const queues: QueueType[] = getQueueTypes();
+  const tickets: Ticket[] = getTickets();
 
-  ticketList.innerHTML = queues.map((queue) => {
+  ticketList.innerHTML = queues.map((queue: QueueType) => {
     const queueTickets = tickets
-      .filter((ticket) => ticket.code === queue.code)
-      .sort((a, b) => b.createdAt - a.createdAt);
+      .filter((ticket: Ticket) => ticket.typeCode === queue.code)
+      .sort((a: Ticket, b: Ticket) => b.timestamp - a.timestamp);
 
-    const ticketHTML = queueTickets.map((ticket) => {
+    const ticketHTML = queueTickets.map((ticket: Ticket) => {
       return `
         <p>
-          <strong>${escapeHTML(ticket.number)}</strong>
+          <strong>${escapeHTML(ticket.ticketNumber)}</strong>
           — ${escapeHTML(ticket.priority)}
           — ${escapeHTML(ticket.status)}
         </p>
@@ -130,9 +133,7 @@ if (!token || (role !== "admin" && role !== "moderator")) {
   window.location.replace("login.html");
 } else {
   const firstName = localStorage.getItem("firstName") || "Admin";
-
   userInfo.textContent = `Pengguna: ${firstName} | Role: ${role}`;
-
   renderQueues();
 }
 
@@ -165,10 +166,7 @@ queueList.addEventListener("click", (event: MouseEvent) => {
 
   if (!(target instanceof Element)) return;
 
-  const button = target.closest<HTMLButtonElement>(
-    "button[data-action]"
-  );
-
+  const button = target.closest<HTMLButtonElement>("button[data-action]");
   if (!button) return;
 
   const code = button.dataset.code;
@@ -181,10 +179,7 @@ queueList.addEventListener("click", (event: MouseEvent) => {
       toggleQueueType(code);
       showMessage("Status jenis antrian berhasil diubah.");
     } else if (action === "delete") {
-      const confirmed = window.confirm(
-        "Yakin ingin menghapus jenis antrian ini?"
-      );
-
+      const confirmed = window.confirm("Yakin ingin menghapus jenis antrian ini?");
       if (!confirmed) return;
 
       deleteQueueType(code);
@@ -207,12 +202,10 @@ ticketForm.addEventListener("submit", (event: SubmitEvent) => {
 
   const formData = new FormData(ticketForm);
   const code = String(formData.get("code") || "");
-  const priority = String(
-    formData.get("priority") || "Normal"
-  ) as Priority;
+  const priority = String(formData.get("priority") || "Normal") as Priority;
 
   try {
-    const ticket = createTicket(code, priority);
+    const ticket = generateTicket(code, priority);
 
     ticketResult.replaceChildren();
 
@@ -220,16 +213,20 @@ ticketForm.addEventListener("submit", (event: SubmitEvent) => {
     heading.textContent = "Tiket berhasil diterbitkan";
 
     const number = document.createElement("p");
-    number.textContent = ticket.number;
+    number.textContent = ticket.ticketNumber;
+
+    // Ditambahkan tipe eksplisit pada find
+    const queue = getQueueTypes().find((q: QueueType) => q.code === ticket.typeCode);
+    const queueName = queue ? queue.name : ticket.typeCode;
 
     const details = document.createElement("p");
-    details.textContent =
-      `${ticket.queueName} — ${ticket.priority} — ${ticket.status}`;
+    details.textContent = `${queueName} — ${ticket.priority} — ${ticket.status}`;
 
     ticketResult.append(heading, number, details);
 
     showMessage("Tiket manual berhasil diterbitkan.");
     renderQueues();
+    window.dispatchEvent(new Event("storage"));
   } catch (error) {
     showMessage(
       error instanceof Error
@@ -241,10 +238,7 @@ ticketForm.addEventListener("submit", (event: SubmitEvent) => {
 
 // Reset seluruh tiket
 document.querySelector("#resetButton")?.addEventListener("click", () => {
-  const confirmed = window.confirm(
-    "Reset seluruh tiket antrian? Data tiket akan dihapus."
-  );
-
+  const confirmed = window.confirm("Reset seluruh tiket antrian? Data tiket akan dihapus.");
   if (!confirmed) return;
 
   try {
@@ -253,6 +247,7 @@ document.querySelector("#resetButton")?.addEventListener("click", () => {
 
     showMessage("Seluruh tiket berhasil direset.");
     renderQueues();
+    window.dispatchEvent(new Event("storage"));
   } catch {
     showMessage("Gagal melakukan reset antrian.");
   }
