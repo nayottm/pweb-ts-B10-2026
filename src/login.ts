@@ -25,8 +25,20 @@ function setLoading(loading: boolean): void {
 }
 
 // Kalau sudah login, langsung arahkan
+// Kalau sudah login, cek apakah datanya sinkron atau korup
 const existing = getSession();
-if (existing) redirectByRole(existing.role);
+const syncToken = localStorage.getItem("token");
+
+if (existing && syncToken) {
+  // Jika data utuh, langsung arahkan
+  redirectByRole(existing.role);
+} else {
+  // Jika data korup/tidak lengkap akibat error sebelumnya, hapus paksa agar tidak looping!
+  localStorage.removeItem("session");
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  localStorage.removeItem("firstName");
+}
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -61,7 +73,18 @@ form.addEventListener("submit", async (e) => {
       role = (await meRes.json()).role;
     }
 
-    const finalRole: Role = role ?? "user";
+    // Jika login pakai akun bernama "operator", paksa role menjadi "user"
+    const finalRole: Role = (username.toLowerCase() === "operator" || username.toLowerCase() === "emilys") 
+      ? "user" 
+      : (role ?? "user");
+
+    // --- TAMBAHAN SINKRONISASI TUGAS KELOMPOK ---
+    // Menyimpan token, role, dan firstName secara terpisah agar index.ts dan operator.ts bisa membacanya
+    localStorage.setItem("token", token);
+    localStorage.setItem("role", finalRole);
+    localStorage.setItem("firstName", data.firstName);
+    // -------------------------------------------
+
     saveSession({ token, role: finalRole, firstName: data.firstName });
     redirectByRole(finalRole);
   } catch (err) {

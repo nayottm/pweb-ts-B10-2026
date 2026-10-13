@@ -1,12 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getQueueTypes = getQueueTypes;
-exports.addQueueType = addQueueType;
-exports.toggleQueueType = toggleQueueType;
-exports.deleteQueueType = deleteQueueType;
-exports.getActiveQueueTypes = getActiveQueueTypes;
 const STORAGE_KEY = "queueTypes";
-function getQueueTypes() {
+export function getQueueTypes() {
     try {
         const data = localStorage.getItem(STORAGE_KEY);
         if (!data)
@@ -21,7 +14,7 @@ function getQueueTypes() {
 function saveQueueTypes(queues) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(queues));
 }
-function addQueueType(code, name) {
+export function addQueueType(code, name) {
     const normalizedCode = code.trim().toUpperCase();
     const normalizedName = name.trim();
     if (!/^[A-Z]$/.test(normalizedCode)) {
@@ -46,7 +39,7 @@ function addQueueType(code, name) {
     saveQueueTypes(queues);
     return newQueue;
 }
-function toggleQueueType(code) {
+export function toggleQueueType(code) {
     const queues = getQueueTypes();
     const queue = queues.find(item => item.code === code);
     if (!queue)
@@ -54,7 +47,7 @@ function toggleQueueType(code) {
     queue.active = !queue.active;
     saveQueueTypes(queues);
 }
-function deleteQueueType(code) {
+export function deleteQueueType(code) {
     const queues = getQueueTypes();
     const updated = queues.filter(item => item.code !== code);
     if (updated.length === queues.length) {
@@ -62,6 +55,6 @@ function deleteQueueType(code) {
     }
     saveQueueTypes(updated);
 }
-function getActiveQueueTypes() {
+export function getActiveQueueTypes() {
     return getQueueTypes().filter(queue => queue.active);
 }

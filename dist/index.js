@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const queryTypes_js_1 = require("./queryTypes.js");
-const tickets_js_1 = require("./tickets.js");
+import { getQueueTypes, addQueueType, toggleQueueType, deleteQueueType } from "./queryTypes.js";
+import { createTicket, getTickets, resetTickets } from "./tickets.js";
 const queueForm = document.querySelector("#queueForm");
 const ticketForm = document.querySelector("#ticketForm");
 const queueList = document.querySelector("#queueList");
@@ -24,7 +22,7 @@ function showMessage(text) {
     message.textContent = text;
 }
 function renderQueues() {
-    const queues = (0, queryTypes_js_1.getQueueTypes)();
+    const queues = getQueueTypes();
     queueList.innerHTML = queues.map((queue) => {
         const status = queue.active ? "Aktif" : "Nonaktif";
         const toggleText = queue.active ? "Nonaktifkan" : "Aktifkan";
@@ -54,8 +52,8 @@ function renderQueues() {
     renderTickets();
 }
 function renderTickets() {
-    const queues = (0, queryTypes_js_1.getQueueTypes)();
-    const tickets = (0, tickets_js_1.getTickets)();
+    const queues = getQueueTypes();
+    const tickets = getTickets();
     ticketList.innerHTML = queues.map((queue) => {
         const queueTickets = tickets
             .filter((ticket) => ticket.typeCode === queue.code)
@@ -93,7 +91,7 @@ queueForm.addEventListener("submit", (event) => {
     const code = String(formData.get("code") || "");
     const name = String(formData.get("name") || "");
     try {
-        (0, queryTypes_js_1.addQueueType)(code, name);
+        addQueueType(code, name);
         queueForm.reset();
         showMessage("Jenis antrian berhasil ditambahkan.");
         renderQueues();
@@ -115,14 +113,14 @@ queueList.addEventListener("click", (event) => {
         return;
     try {
         if (action === "toggle") {
-            (0, queryTypes_js_1.toggleQueueType)(code);
+            toggleQueueType(code);
             showMessage("Status jenis antrian berhasil diubah.");
         }
         else if (action === "delete") {
             const confirmed = window.confirm("Yakin ingin menghapus jenis antrian ini?");
             if (!confirmed)
                 return;
-            (0, queryTypes_js_1.deleteQueueType)(code);
+            deleteQueueType(code);
             showMessage("Jenis antrian berhasil dihapus.");
         }
         renderQueues();
@@ -137,13 +135,13 @@ ticketForm.addEventListener("submit", (event) => {
     const code = String(formData.get("code") || "");
     const priority = String(formData.get("priority") || "Normal");
     try {
-        const ticket = (0, tickets_js_1.createTicket)(code, priority);
+        const ticket = createTicket(code, priority);
         ticketResult.replaceChildren();
         const heading = document.createElement("h3");
         heading.textContent = "Tiket berhasil diterbitkan";
         const number = document.createElement("p");
         number.textContent = ticket.ticketNumber;
-        const queue = (0, queryTypes_js_1.getQueueTypes)().find((q) => q.code === ticket.typeCode);
+        const queue = getQueueTypes().find((q) => q.code === ticket.typeCode);
         const queueName = queue ? queue.name : ticket.typeCode;
         const details = document.createElement("p");
         details.textContent = `${queueName} — ${ticket.priority} — ${ticket.status}`;
@@ -161,7 +159,7 @@ document.querySelector("#resetButton")?.addEventListener("click", () => {
     if (!confirmed)
         return;
     try {
-        (0, tickets_js_1.resetTickets)();
+        resetTickets();
         ticketResult.replaceChildren();
         showMessage("Seluruh tiket berhasil direset.");
         renderQueues();

@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tickets_js_1 = require("./tickets.js");
-const queryTypes_js_1 = require("./queryTypes.js");
+import { getTickets, callNext, skipCurrent, finishCurrent, getWaitingTickets } from './tickets.js';
+import { getQueueTypes } from './queryTypes.js';
 // Pastikan key auth sama dengan login.ts (Orang 1)
 if (!localStorage.getItem('token')) {
     window.location.href = 'login.html';
@@ -17,11 +15,11 @@ function renderOperatorPanel() {
     if (!container)
         return;
     container.innerHTML = '';
-    const queueTypes = (0, queryTypes_js_1.getQueueTypes)();
-    const allTickets = (0, tickets_js_1.getTickets)();
+    const queueTypes = getQueueTypes();
+    const allTickets = getTickets();
     queueTypes.forEach((qt) => {
         const calledTicket = allTickets.find((t) => t.typeCode === qt.code && t.status === 'called');
-        const waitingTickets = (0, tickets_js_1.getWaitingTickets)(qt.code);
+        const waitingTickets = getWaitingTickets(qt.code);
         const nextTicket = waitingTickets.length > 0 ? waitingTickets[0] : null;
         const card = document.createElement('div');
         card.className = 'card';
@@ -55,11 +53,11 @@ function renderOperatorPanel() {
 }
 window.handleAction = (typeCode, action) => {
     if (action === 'next')
-        (0, tickets_js_1.callNext)(typeCode);
+        callNext(typeCode);
     else if (action === 'skip')
-        (0, tickets_js_1.skipCurrent)(typeCode);
+        skipCurrent(typeCode);
     else if (action === 'finish')
-        (0, tickets_js_1.finishCurrent)(typeCode);
+        finishCurrent(typeCode);
     renderOperatorPanel();
     window.dispatchEvent(new Event('storage'));
 };

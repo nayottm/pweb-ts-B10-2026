@@ -1,13 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tickets_js_1 = require("./tickets.js");
-const queryTypes_js_1 = require("./queryTypes.js");
+import { generateTicket } from './tickets.js';
+import { getActiveQueueTypes } from './queryTypes.js';
 function renderQueueCards() {
     const container = document.getElementById('queue-container');
     if (!container)
         return;
     container.innerHTML = '';
-    const queueTypes = (0, queryTypes_js_1.getActiveQueueTypes)();
+    const queueTypes = getActiveQueueTypes();
     queueTypes.forEach((qt) => {
         const card = document.createElement('div');
         card.className = 'card';
@@ -28,7 +26,7 @@ function renderQueueCards() {
     });
 }
 window.takeTicket = (typeCode, priority) => {
-    const newTicket = (0, tickets_js_1.generateTicket)(typeCode, priority);
+    const newTicket = generateTicket(typeCode, priority);
     alert(`Tiket Anda berhasil dicetak!\nNomor: ${newTicket.ticketNumber}\nPrioritas: ${newTicket.priority}`);
     window.dispatchEvent(new Event('storage'));
 };

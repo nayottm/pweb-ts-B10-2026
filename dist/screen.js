@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const types_js_1 = require("./types.js");
+import { KEYS } from "./types.js";
 const POLL_MS = 2500; // soal minta polling 2-3 detik
 const cardsEl = document.getElementById("cards");
 const updatedEl = document.getElementById("updated");
@@ -41,8 +39,8 @@ function buildCard(type, tickets) {
     return card;
 }
 function render() {
-    const types = read(types_js_1.KEYS.QUEUE_TYPES).filter((t) => t.active);
-    const tickets = read(types_js_1.KEYS.TICKETS);
+    const types = read(KEYS.QUEUE_TYPES).filter((t) => t.active);
+    const tickets = read(KEYS.TICKETS);
     cardsEl.replaceChildren();
     if (types.length === 0) {
         cardsEl.append(el("p", "muted", "Belum ada jenis antrian aktif."));

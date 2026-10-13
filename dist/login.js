@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const auth_js_1 = require("./auth.js");
+import { saveSession, getSession } from "./auth.js";
 const form = document.getElementById("loginForm");
 const btn = document.getElementById("submitBtn");
 const errorEl = document.getElementById("error");
@@ -20,9 +18,20 @@ function setLoading(loading) {
     btn.textContent = loading ? "Memproses..." : "Masuk";
 }
 // Kalau sudah login, langsung arahkan
-const existing = (0, auth_js_1.getSession)();
-if (existing)
+// Kalau sudah login, cek apakah datanya sinkron atau korup
+const existing = getSession();
+const syncToken = localStorage.getItem("token");
+if (existing && syncToken) {
+    // Jika data utuh, langsung arahkan
     redirectByRole(existing.role);
+}
+else {
+    // Jika data korup/tidak lengkap akibat error sebelumnya, hapus paksa agar tidak looping!
+    localStorage.removeItem("session");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("firstName");
+}
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     errorEl.hidden = true;
@@ -53,8 +62,17 @@ form.addEventListener("submit", async (e) => {
                 throw new Error("Gagal mengambil data pengguna.");
             role = (await meRes.json()).role;
         }
-        const finalRole = role ?? "user";
-        (0, auth_js_1.saveSession)({ token, role: finalRole, firstName: data.firstName });
+        // Jika login pakai akun bernama "operator", paksa role menjadi "user"
+        const finalRole = (username.toLowerCase() === "operator" || username.toLowerCase() === "emilys")
+            ? "user"
+            : (role ?? "user");
+        // --- TAMBAHAN SINKRONISASI TUGAS KELOMPOK ---
+        // Menyimpan token, role, dan firstName secara terpisah agar index.ts dan operator.ts bisa membacanya
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", finalRole);
+        localStorage.setItem("firstName", data.firstName);
+        // -------------------------------------------
+        saveSession({ token, role: finalRole, firstName: data.firstName });
         redirectByRole(finalRole);
     }
     catch (err) {

@@ -1,23 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTicket = void 0;
-exports.getTickets = getTickets;
-exports.saveTickets = saveTickets;
-exports.generateTicket = generateTicket;
-exports.getWaitingTickets = getWaitingTickets;
-exports.callNext = callNext;
-exports.skipCurrent = skipCurrent;
-exports.finishCurrent = finishCurrent;
-exports.resetTickets = resetTickets;
 const TICKETS_KEY = 'rs_tickets';
-function getTickets() {
+export function getTickets() {
     const data = localStorage.getItem(TICKETS_KEY);
     return data ? JSON.parse(data) : [];
 }
-function saveTickets(tickets) {
+export function saveTickets(tickets) {
     localStorage.setItem(TICKETS_KEY, JSON.stringify(tickets));
 }
-function generateTicket(typeCode, priority) {
+export function generateTicket(typeCode, priority) {
     const tickets = getTickets();
     const typeTickets = tickets.filter(t => t.typeCode === typeCode);
     let nextNum = 1;
@@ -39,7 +28,7 @@ function generateTicket(typeCode, priority) {
     saveTickets(tickets);
     return newTicket;
 }
-function getWaitingTickets(typeCode) {
+export function getWaitingTickets(typeCode) {
     const tickets = getTickets().filter(t => t.typeCode === typeCode && t.status === 'waiting');
     const priorityWeight = {
         'VIP': 1, 'Disabilitas': 2, 'Lansia': 3, 'Normal': 4
@@ -51,7 +40,7 @@ function getWaitingTickets(typeCode) {
         return a.timestamp - b.timestamp;
     });
 }
-function callNext(typeCode) {
+export function callNext(typeCode) {
     const tickets = getTickets();
     const currentTicket = tickets.find(t => t.typeCode === typeCode && t.status === 'called');
     if (currentTicket)
@@ -65,22 +54,22 @@ function callNext(typeCode) {
     }
     saveTickets(tickets);
 }
-function skipCurrent(typeCode) {
+export function skipCurrent(typeCode) {
     const tickets = getTickets();
     const currentTicket = tickets.find(t => t.typeCode === typeCode && t.status === 'called');
     if (currentTicket)
         currentTicket.status = 'skipped';
     saveTickets(tickets);
 }
-function finishCurrent(typeCode) {
+export function finishCurrent(typeCode) {
     const tickets = getTickets();
     const currentTicket = tickets.find(t => t.typeCode === typeCode && t.status === 'called');
     if (currentTicket)
         currentTicket.status = 'done';
     saveTickets(tickets);
 }
-function resetTickets() {
+export function resetTickets() {
     localStorage.removeItem(TICKETS_KEY);
 }
 // Alias agar kompatibel dengan kode index.ts milik temanmu
-exports.createTicket = generateTicket;
+export const createTicket = generateTicket;

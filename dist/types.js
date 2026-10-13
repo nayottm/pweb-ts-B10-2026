@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.KEYS = void 0;
-exports.KEYS = {
+export const KEYS = {
     TOKEN: "token",
     ROLE: "role",
     FIRST_NAME: "firstName",

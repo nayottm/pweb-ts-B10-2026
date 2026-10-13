@@ -1,3 +1,6 @@
+/* =========================================
+   1. VARIABEL TEMA & UTILITAS GLOBAL
+   ========================================= */
 :root {
   --bg: #f4f8f8;
   --card: #ffffff;
@@ -7,6 +10,7 @@
   --accent: #fb9300;
   --accent-dark: #d97c00;
   --danger: #dc2626;
+  --success: #10b981;
 }
 
 * { box-sizing: border-box; }
@@ -16,70 +20,207 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
+  line-height: 1.5;
 }
 
 .muted { color: var(--muted); }
 .small { font-size: 0.8rem; }
-.error { color: var(--danger); font-size: 0.9rem; margin: 0.5rem 0; }
+.error { color: var(--danger); font-size: 0.9rem; margin: 0.5rem 0; font-weight: 500;}
+.text-orange { color: var(--accent); }
 
-.btn {
+/* Layout Grid Universal (Digunakan Operator & Kiosk) */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   2. KOMPONEN TOMBOL (BUTTONS)
+   ========================================= */
+.btn, button {
   padding: 0.7rem 1rem;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #fff;
   cursor: pointer;
   font-size: 1rem;
+  font-family: inherit;
+  color: var(--text);
+  transition: all 0.2s ease;
 }
-.btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  width: 100%;
-}
-.btn-primary:hover:not(:disabled) { background: var(--accent-dark); }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* Login */
+.btn:hover:not(:disabled), button:hover:not(:disabled) {
+  background: #f8fafc;
+}
+
+.btn:disabled, button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; width: 100%; }
+.btn-primary:hover:not(:disabled) { background: var(--accent-dark); color: #fff;}
+
+.btn-dark { background: var(--text); color: #fff !important; border-color: var(--text); }
+.btn-dark:hover { background: #334155; }
+
+.btn-outline { border: 1px solid var(--border); color: var(--text); background: transparent; font-weight: 500;}
+.btn-outline:hover { background: var(--border); }
+
+/* Tombol Khusus Operator & Queue */
+.btn-main { background: var(--text); color: #fff; font-weight: 700; width: 100%; margin: 1rem 0; padding: 0.8rem; border: none; }
+.btn-main:hover { background: #334155; }
+.btn-sub { background: #e2e8f0; border: none; padding: 0.5rem; font-size: 0.85rem; border-radius: 6px; flex: 1; font-weight: 600; color: var(--text);}
+.btn-sub:hover { background: #cbd5e1; }
+.btn-call { background: var(--accent); color: #fff; border: none; font-weight: bold; }
+.btn-call:hover { background: var(--accent-dark); }
+
+/* =========================================
+   3. HALAMAN LOGIN (login.html)
+   ========================================= */
 .login-page { display: grid; place-items: center; min-height: 100vh; padding: 1rem; }
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   background: var(--card);
-  padding: 2rem;
+  padding: 2.5rem 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
 }
-.login-card h1 { margin-top: 0; }
-.login-card label { display: block; margin: 1rem 0 0.3rem; font-weight: 600; font-size: 0.9rem; }
+.login-card h1 { margin-top: 0; margin-bottom: 0.5rem; font-size: 1.8rem;}
+.login-card form { display: flex; flex-direction: column; margin-top: 1.5rem; }
+.login-card label { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem; margin-top: 1rem; }
 .login-card input {
-  width: 100%;
-  padding: 0.65rem 0.8rem;
+  padding: 0.75rem;
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 1rem;
+  background: #f8fafc;
 }
-.login-card .btn { margin-top: 1rem; }
+.login-card input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(251, 147, 0, 0.15); }
+.login-card .btn { margin-top: 1.8rem; }
 
-/* Layar antrian */
+/* =========================================
+   4. DASHBOARD ADMIN (index.html)
+   ========================================= */
+header:not(.screen-header) {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+header h1, header h2 { margin: 0; font-size: 1.4rem; color: var(--text); }
+header p:not(.muted) { margin: 0; }
+#userInfo { margin: 0 auto 0 1.5rem; color: var(--muted); font-size: 0.95rem; font-weight: 500; }
+
+#resetButton { border-color: var(--danger); color: var(--danger); font-weight: 600;}
+#resetButton:hover { background: var(--danger); color: #fff; }
+#logoutButton { background: var(--text); color: #fff; border-color: var(--text); font-weight: 600;}
+#logoutButton:hover { background: #334155; }
+
+main:not(.login-card):not(.cards) {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 850px) {
+  main:not(.login-card):not(.cards) { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+
+#message { grid-column: 1 / -1; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 1rem; border-radius: 8px; text-align: center; font-weight: 500;}
+
+main section {
+  background: var(--card);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.02);
+}
+main section h2 { margin-top: 0; font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; margin-bottom: 1.2rem; }
+
+#queueForm, #ticketForm { display: flex; flex-direction: column; gap: 1rem; }
+#queueForm label, #ticketForm label { font-weight: 600; font-size: 0.9rem; margin-bottom: -0.5rem; }
+#queueForm input, #ticketForm select { padding: 0.7rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: #fff;}
+#queueForm input:focus, #ticketForm select:focus { outline: none; border-color: var(--accent); }
+#queueForm button, #ticketForm button { background: var(--accent); color: white; padding: 0.8rem; font-weight: 600; border: none; margin-top: 0.5rem;}
+#queueForm button:hover, #ticketForm button:hover { background: var(--accent-dark); }
+
+#queueList, #ticketList { display: flex; flex-direction: column; gap: 1rem; }
+#queueList article, #ticketList article { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; }
+#queueList article h3, #ticketList article h3 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+#queueList article p, #ticketList article p { margin: 0.3rem 0; font-size: 0.9rem; color: var(--muted); }
+#ticketList article p strong { color: var(--text); font-size: 1.1rem; }
+
+#queueList article button { padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-right: 0.5rem; margin-top: 0.5rem; font-weight: 600; }
+#queueList article button[data-action="delete"] { color: var(--danger); border-color: var(--danger); }
+#queueList article button[data-action="delete"]:hover { background: var(--danger); color: #fff; }
+
+#ticketResult { margin-top: 2rem; text-align: center; }
+#ticketResult h3 { color: var(--accent); margin-bottom: 0.2rem; }
+#ticketResult p:nth-of-type(1) { font-size: 2.5rem; font-weight: 800; margin: 0.5rem 0; }
+
+/* =========================================
+   5. PANEL OPERATOR & KIOSK (operator.html & queue.html)
+   ========================================= */
+.operator-header { padding: 1.5rem; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.card h3 { margin: 0; font-size: 1.2rem; color: var(--text);}
+
+/* Panel Operator */
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.ticket-number { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: 1px; color: var(--text);}
+.btn-group { display: flex; gap: 0.5rem; }
+
+/* Kiosk Antrian */
+.priority-btns { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+
+/* =========================================
+   6. LAYAR MONITOR ANTRIAN (screen.html)
+   ========================================= */
 .screen-page { padding: 1.5rem; }
-.screen-header {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;
-}
-.screen-header h1 { margin: 0; font-size: 1.5rem; }
+.screen-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.screen-header h1 { margin: 0; font-size: 1.8rem; }
 .screen-nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.screen-nav .btn { padding: 0.5rem 0.9rem; font-size: 0.9rem; text-decoration: none; color: var(--text); }
-.btn-dark { background: #0f172a; color: #fff !important; border-color: #0f172a; }
+.screen-nav .btn { padding: 0.6rem 1rem; font-size: 0.9rem; text-decoration: none; color: var(--text); font-weight: 600;}
 
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
 .screen-card { display: flex; flex-direction: column; min-height: 280px; }
-.card-head { display: flex; justify-content: space-between; align-items: center; }
-.card-head h2 { margin: 0; font-size: 1rem; }
-.badge { background: #eef2f6; color: var(--muted); font-size: 0.75rem; padding: 0.1rem 0.5rem; border-radius: 6px; }
+.card-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem;}
+.card-head h2 { margin: 0; font-size: 1.2rem; }
+.badge { background: #eef2f6; color: var(--muted); font-size: 0.8rem; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: 600;}
+
 .card-body { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-.status-called { color: var(--accent); font-size: 0.75rem; font-weight: 700; align-self: flex-start; }
-.number { font-size: 3.2rem; font-weight: 800; letter-spacing: 1px; }
-.empty-title { font-weight: 600; margin: 0 0 0.25rem; }
-.card-foot { border-top: 1px solid var(--border); padding-top: 0.6rem; text-align: center; font-size: 0.85rem; color: var(--muted); }
+.status-called { color: var(--accent); font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 0.5rem; align-self: center;}
+.number { font-size: 3.5rem; font-weight: 800; letter-spacing: 2px; color: var(--text); line-height: 1;}
+.empty-title { font-weight: 600; margin: 0 0 0.25rem; color: var(--muted);}
+
+.card-foot { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; text-align: center; font-size: 0.85rem; color: var(--muted); }
