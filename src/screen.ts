@@ -28,10 +28,10 @@ function el<K extends keyof HTMLElementTagNameMap>(
 
 function buildCard(type: QueueType, tickets: Ticket[]): HTMLElement {
   const called = tickets.find(
-    (t) => t.queueTypeId === type.id && t.status === "Dipanggil"
+    (t) => t.typeCode === type.code && t.status === "called"
   );
   const waiting = tickets.filter(
-    (t) => t.queueTypeId === type.id && t.status === "Menunggu"
+    (t) => t.typeCode === type.code && t.status === "waiting"
   ).length;
 
   const card = el("section", "card screen-card");
@@ -41,7 +41,7 @@ function buildCard(type: QueueType, tickets: Ticket[]): HTMLElement {
 
   const body = el("div", "card-body");
   if (called) {
-    body.append(el("span", "status-called", "● DIPANGGIL"), el("div", "number", called.number));
+    body.append(el("span", "status-called", "● DIPANGGIL"), el("div", "number", called.ticketNumber));
   } else {
     body.append(
       el("p", "empty-title", "Belum ada nomor dipanggil"),
@@ -56,8 +56,8 @@ function buildCard(type: QueueType, tickets: Ticket[]): HTMLElement {
 }
 
 function render(): void {
-  const types = read<QueueType>(KEYS.queueTypes).filter((t) => t.active);
-  const tickets = read<Ticket>(KEYS.tickets);
+  const types = read<QueueType>(KEYS.QUEUE_TYPES).filter((t) => t.active);
+  const tickets = read<Ticket>(KEYS.TICKETS);
 
   cardsEl.replaceChildren();
   if (types.length === 0) {

@@ -9,12 +9,12 @@ export interface Session {
 }
 
 export function saveSession(s: Session): void {
-  localStorage.setItem(KEYS.session, JSON.stringify(s));
+  localStorage.setItem(KEYS.SESSION, JSON.stringify(s));
 }
 
 export function getSession(): Session | null {
   try {
-    const raw = localStorage.getItem(KEYS.session);
+    const raw = localStorage.getItem(KEYS.SESSION);
     return raw ? (JSON.parse(raw) as Session) : null;
   } catch {
     return null;
@@ -22,7 +22,7 @@ export function getSession(): Session | null {
 }
 
 export function clearSession(): void {
-  localStorage.removeItem(KEYS.session);
+  localStorage.removeItem(KEYS.SESSION);
 }
 
 // Moderator diperlakukan sama dengan admin
