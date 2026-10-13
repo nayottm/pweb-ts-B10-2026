@@ -42,6 +42,7 @@ export function addQueueType(code: string, name: string): QueueType {
   }
 
   const newQueue: QueueType = {
+    id: Date.now().toString(), 
     code: normalizedCode,
     name: normalizedName,
     active: true
